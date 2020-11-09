@@ -10,7 +10,7 @@ public class Dice {
 
 
     public enum Figures {
-        ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5), SIX(6);
+        one(1), two(2), three(3), four(4), five(5), six(6);
         int numericValue;
 
         Figures(int numericValue){

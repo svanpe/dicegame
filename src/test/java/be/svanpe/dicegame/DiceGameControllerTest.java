@@ -40,7 +40,7 @@ public class DiceGameControllerTest {
     }
 
     @Test
-    public void verifyGreetingIsReceived() throws Exception {
+    public void verifyGameIsReceived() throws Exception {
 
         BlockingQueue<String> blockingQueue = new ArrayBlockingQueue(1);
 

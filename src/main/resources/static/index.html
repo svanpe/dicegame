@@ -3,11 +3,37 @@
 <head>
     <title>Hello WebSocket</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/main.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/31d122af8a.js" crossorigin="anonymous"></script>
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/app.js"></script>
+    <style>
+        /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+        .row.content {height: 1500px}
+
+        /* Set gray background color and 100% height */
+        .sidenav {
+            background-color: #f1f1f1;
+            height: 100%;
+        }
+
+        /* Set black background color, white text and some padding */
+        footer {
+            background-color: #555;
+            color: white;
+            padding: 15px;
+        }
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+        @media screen and (max-width: 767px) {
+            .sidenav {
+                height: auto;
+                padding: 15px;
+            }
+            .row.content {height: auto;}
+        }
+    </style>
 </head>
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
@@ -35,12 +61,44 @@
             </form>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form class="form-inline">
+                <div class="form-group">
+                    <input type="text" id="token" class="form-control" placeholder="Your token here...">
+                    <label for="name">Your name : </label>
+                    <input type="text" id="playerName" class="form-control" placeholder="Your name here...">
+                </div>
+                <button id="register" class="btn btn-default" type="submit">Register</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div id="gamestatus"></div>
+
+        </div>
+    <div class="row">
+        <div class="col-sm-3 sidenav">
+            <ul class="list-group" id="players"></ul>
+        </div>
+        <div class="col-sm-8">
+            <div id="figures" class="col"/></div>
+            <button id="play" class="btn btn-default" type="submit">Play</button>
+        </div>
+        <div class="col-sm-8">
+            <table id="cards"></table>
+        </div>
+
+    </div>
+
+
+
     <div class="row">
         <div class="col-md-12">
             <table id="conversation" class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Game snapshots</th>
+                    <th>messages received</th>
                 </tr>
                 </thead>
                 <tbody id="games">
@@ -48,6 +106,7 @@
             </table>
         </div>
     </div>
+
 </div>
 </body>
 </html>

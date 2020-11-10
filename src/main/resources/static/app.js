@@ -17,14 +17,12 @@ function connect() {
     var socket = new SockJS('/dicegame-websocket');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-        $("#token").val(token);
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/game', function (greeting) {
             showGreeting(greeting.body);
             var thegame = JSON.parse(greeting.body);
-            $("#gamestatus").empty();
-            $("#gamestatus").append("<h2>"+thegame.status+"</h2>")
+            showStatus(thegame.status, thegame.actions);
             showDices(thegame.dices);
             showPlayers(thegame.players, thegame.indexOfCurrentPlayer, thegame.countOfTrialForPlayer);
             showCards(thegame.cards);
@@ -47,9 +45,7 @@ function register() {
 
     stompClient.send("/app/register", {}, JSON.stringify(registerMsg));
 }
-function sendName() {
-    stompClient.send("/app/play", {}, $("#name").val());
-}
+
 
 function sendPlay() {
 
@@ -57,11 +53,45 @@ function sendPlay() {
     playMessage.token = token;
     playMessage.diceToKeep = new Array();
 
+    if($("#diceBtn0")!=null && $("#diceBtn0").prop('checked')){
+        playMessage.diceToKeep.push(0);
+    }
+    if($("#diceBtn1")!=null && $("#diceBtn1").prop('checked')){
+        playMessage.diceToKeep.push(1);
+    }
+    if($("#diceBtn2")!=null && $("#diceBtn2").prop('checked')){
+        playMessage.diceToKeep.push(2);
+    }
+    if($("#diceBtn3")!=null && $("#diceBtn3").prop('checked')){
+        playMessage.diceToKeep.push(3);
+    }
+    if($("#diceBtn4")!=null && $("#diceBtn4").prop('checked')){
+        playMessage.diceToKeep.push(4);
+    }
+    if($("#diceBtn5")!=null && $("#diceBtn5").prop('checked')){
+        playMessage.diceToKeep.push(5);
+    }
+
     stompClient.send("/app/play", {}, JSON.stringify(playMessage));
 }
 
 function showGreeting(message) {
     $("#games").append("<tr><td>" + message + "</td></tr>");
+}
+
+function showStatus(status, actions){
+    $("#gamestatus").empty();
+    $("#gamestatus").append("<h2>"+status+"</h2>")
+
+    $("#actions").empty();
+
+    actions.forEach(function (action) {
+
+        $("#actions")
+            .append("<div class=\"alert alert-info\">" + action.message + "</div>");
+
+
+    });
 }
 
 function showDices(dices) {
@@ -72,18 +102,19 @@ function showDices(dices) {
 
     var btnIndex = 0;
 
+    $("#figures").append("<div id=\"btn-group-dices\" class=\"btn-group-toggle\" data-toggle=\"buttons\">");
+
     dices.forEach(function (dice) {
-        console.log(dice.figure);
 
-
-        $("#figures")
-            .append(" <button id=\"diceBtn" + btnIndex + "\" class=\"btn btn-primary\" data-toggle=\"button\" aria-pressed=\"false\" >"
-            + "<i class=\"fas fa-dice-" + dice.figure + "\" style=\"font-size:60px;color:" + dice.color + ";\"></i>"
-            + "</button>");
+        $("#btn-group-dices")
+            .append("<input type=\"checkbox\" data-toggle=\"switchbutton\" id=\"diceBtn"+ btnIndex +"\" checked>"
+                + "<i class=\"fas fa-dice-" + dice.figure + "\" style=\"font-size:60px;color:" + dice.color + ";\"></i>"
+           );
 
         btnIndex++;
 
     });
+
 
 }
 
@@ -106,6 +137,12 @@ function showDices(dices) {
                 if(index==activePlayer){
                     aclass=" active";
                     count = countOfTrial + "/3"
+
+                    if($("#playerName").val()==player.name){
+                        $("#play").show();
+                    } else {
+                        $("#play").hide();
+                    }
                 }
 
                 $("#players").append("<li class=\"list-group-item" + aclass + "\" >" +player.name
@@ -116,6 +153,7 @@ function showDices(dices) {
         });
 
         $("#players").append("</ul>");
+
 
     }
 
@@ -130,7 +168,7 @@ function showCards(cards){
 
 
         $("#cards").append("<td><div class=\"well\" style=\"width: 18rem;\">"
-            +"<h2>"+card.name+"</h2>"
+            +"<h2><strong>"+card.name+"</strong></h2>"
             +"<p>" + card.explaination + "</p>"
             +"<span class=\"badge\">"+card.points+"</span>"
             +"</div></td>");
@@ -160,7 +198,6 @@ $(function () {
     });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
     $( "#register" ).click(function() { register(); });
     $( "#play" ).click(function() { sendPlay(); });
 });

@@ -1,5 +1,7 @@
 package be.svanpe.dicegame;
 
+import be.svanpe.dicegame.game.Action;
+import be.svanpe.dicegame.game.Game;
 import be.svanpe.dicegame.game.GameHandler;
 import be.svanpe.dicegame.game.Player;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,7 +11,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 
@@ -36,18 +37,29 @@ public class GameWSController {
     @SendTo("/topic/game")
     public String register(String message){
 
+        if(handler.getGame().getStatus()== Game.GameStatus.PLAYING){
+            return null;
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-
-
         try {
+
+            if(handler.getGame().getStatus()== Game.GameStatus.COMPLETED){
+                handler = new GameHandler(createPlayers());
+                players = new HashMap<>();
+
+            }
 
             RegisterMessage registerMessage = null;
             registerMessage = objectMapper.readValue(message, RegisterMessage.class);
+
             Player player = new Player(registerMessage.getPlayerName());
             players.put(registerMessage.getToken(),player);
             handler.getGame().getPlayers().add(player);
+            handler.getGame().addAction(new Action(registerMessage.getPlayerName() + " registered for the game!"));
+
             String game = objectMapper.writeValueAsString(handler.getGame());
             return game;
         } catch (JsonProcessingException e) {
@@ -64,6 +76,10 @@ public class GameWSController {
     public String play(String message){
 
 
+        if(handler.getGame().getStatus()== Game.GameStatus.COMPLETED){
+            return null;
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
@@ -79,7 +95,15 @@ public class GameWSController {
 
         try {
             PlayMessage playMessage = objectMapper.readValue(message,PlayMessage.class);
-            handler.playerPlay(playMessage.getDiceToKeep().toArray(new Integer[playMessage.getDiceToKeep().size()]));
+
+            Player who = players.get(playMessage.getToken());
+
+            if(who==null || handler.getGame().getCurrentPlayer().getName().compareTo(who.getName())!=0){
+
+            } else {
+                handler.getGame().setActions(new ArrayList<>());
+                handler.playerPlay(playMessage.getDiceToKeep().toArray(new Integer[playMessage.getDiceToKeep().size()]));
+            }
 
 
         } catch (JsonProcessingException e) {
@@ -100,9 +124,9 @@ public class GameWSController {
 
     public static List<Player> createPlayers(){
         List<Player> players = new ArrayList<>();
-        players.add(new Player("seb"));
-        players.add(new Player("ralf"));
-        players.add(new Player("much"));
+//        players.add(new Player("seb"));
+//        players.add(new Player("ralf"));
+//        players.add(new Player("much"));
 
         return players;
     }

@@ -28,6 +28,11 @@ public class GameHandler {
     }
 
     public List<Dice> playerPlay(Dice ...dicesPlayerKeep){
+
+        if(game.getStatus()== Game.GameStatus.REGISTERING){
+            game.setStatus(Game.GameStatus.PLAYING);
+        }
+
         List<Dice> newDices = new ArrayList<>();
 
         getGame().setCountOfTrialForPlayer(getGame().getCountOfTrialForPlayer()+1);
@@ -108,9 +113,13 @@ public class GameHandler {
             getGame().getCards().remove(card);
 
             System.out.println(player.getName() + " won " + card.getExplaination());
-
+            getGame().addAction(new Action(player.getName() + " won " + card.getExplaination()));
         }
 
+        if(getGame().getCards().isEmpty()){
+            game.setStatus(Game.GameStatus.COMPLETED);
+            getGame().addAction(new Action(player.getName() + " WON THE GAME!!!"));
+        }
         //turn
         getGame().setCountOfTrialForPlayer(0);
 

@@ -54,29 +54,22 @@
         <div class="col-md-6">
             <form class="form-inline">
                 <div class="form-group">
-                    <label for="name">Your play : </label>
-                    <input type="text" id="name" class="form-control" placeholder="Your name here...">
-                </div>
-                <button id="send" class="btn btn-default" type="submit">Send</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <form class="form-inline">
-                <div class="form-group">
-                    <input type="text" id="token" class="form-control" placeholder="Your token here...">
                     <label for="name">Your name : </label>
                     <input type="text" id="playerName" class="form-control" placeholder="Your name here...">
                 </div>
                 <button id="register" class="btn btn-default" type="submit">Register</button>
             </form>
         </div>
+    </div>
+
+    <div class="row">
         <div class="col-md-4">
             <div id="gamestatus"></div>
-
         </div>
+        <div class="col-md-8">
+            <div id="actions"></div>
+        </div>
+
     <div class="row">
         <div class="col-sm-3 sidenav">
             <ul class="list-group" id="players"></ul>
@@ -95,6 +88,8 @@
 
     <div class="row">
         <div class="col-md-12">
+            <button data-toggle="collapse" data-target="#console">console</button>
+            <div id="console" class="collapse">
             <table id="conversation" class="table table-striped">
                 <thead>
                 <tr>
@@ -104,6 +99,7 @@
                 <tbody id="games">
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 

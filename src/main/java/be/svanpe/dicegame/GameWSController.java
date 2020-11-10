@@ -80,6 +80,10 @@ public class GameWSController {
             return null;
         }
 
+        if(players.size()<2){
+            return null;
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 

@@ -1,5 +1,6 @@
 var stompClient = null;
 var token = guid();
+var playerName = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -42,7 +43,7 @@ function register() {
     var registerMsg = new Object();
     registerMsg.token = token;
     registerMsg.playerName = $("#playerName").val();
-
+    playerName = $("#playerName").val();
     stompClient.send("/app/register", {}, JSON.stringify(registerMsg));
 }
 
@@ -133,20 +134,21 @@ function showDices(dices) {
 
                 var aclass="";
                 var count="";
-
+                var youBadge=""
                 if(index==activePlayer){
                     aclass=" active";
                     count = countOfTrial + "/3"
 
-                    if($("#playerName").val()==player.name){
+                    if((playerName==player.name)&&(players.length>1)){
                         $("#play").show();
+                        youBadge="<span class=\"badge\">You</badge>";
                     } else {
                         $("#play").hide();
                     }
                 }
 
                 $("#players").append("<li class=\"list-group-item" + aclass + "\" >" +player.name
-                    + " " + count + " <span class=\"badge\">"+player.score+"</span>" +
+                    + " " + count + " <span class=\"badge\">"+player.score+"</span>" + youBadge +
                     "</li>");
 
                 index++;

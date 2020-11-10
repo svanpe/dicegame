@@ -118,7 +118,7 @@ public class GameHandler {
 
         if(getGame().getCards().isEmpty()){
             game.setStatus(Game.GameStatus.COMPLETED);
-            getGame().addAction(new Action(player.getName() + " WON THE GAME!!!"));
+            getGame().addAction(new Action(bestPlayer().getName() + " WON THE GAME!!!"));
         }
         //turn
         getGame().setCountOfTrialForPlayer(0);
@@ -146,5 +146,21 @@ public class GameHandler {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public Player bestPlayer(){
+        Player bestPlayer = null;
+
+        for(Player player : getGame().getPlayers()){
+            if(bestPlayer==null){
+                bestPlayer = player;
+            } else {
+                if(player.getScore()>bestPlayer.getScore()){
+                    bestPlayer=player;
+                }
+            }
+        }
+
+        return bestPlayer;
     }
 }

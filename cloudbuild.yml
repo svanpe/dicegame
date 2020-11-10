@@ -1,0 +1,9 @@
+steps:
+- name: 'gcr.io/cloud-builders/mvn'
+  id: 'build dicegame'
+  args: ['clean','package']
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'build game image'
+  args: ['build', '--tag=gcr.io/$PROJECT_ID/game-dice:$SHORT_SHA', '.']
+images: 
+- 'gcr.io/$PROJECT_ID/game-dice:$SHORT_SHA'

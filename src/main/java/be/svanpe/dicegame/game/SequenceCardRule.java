@@ -20,11 +20,11 @@ public class SequenceCardRule implements CardRule{
 
              if(previousDice!=null){
                  // following commented code will fix the test case SequenceCardRuleTest.testing5Sequence
-                /* if(dice.getFigure().numericValue == previousDice.getFigure().numericValue)
+                 if(dice.getFigure().numericValue == previousDice.getFigure().numericValue)
                  {
                      continue;
                  } else
-                 */
+
                  if(dice.getFigure().numericValue == previousDice.getFigure().numericValue+1){
                      validationCount ++;
 

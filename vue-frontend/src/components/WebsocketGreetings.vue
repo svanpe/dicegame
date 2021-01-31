@@ -1,9 +1,12 @@
 <template>
   <div>
     <div id="main-content" class="container">
+     <!--
       <div>
         <img class="dice" src="../assets/dices.png" aria-hidden="true" />
       </div>
+
+      -->
       <div class="row">
         <div class="col-md-6">
           <form class="form-inline">
@@ -55,37 +58,62 @@
       </div>
 
       <div class="row">
+
         <div class="col-md-4">
-          <div id="gamestatus"></div>
+          <div id="gamestatus"> {{status}}</div>
         </div>
+
         <div class="col-md-8">
           <div id="actions">
             <div
               class="alert alert-info"
-              v-for="item in received_messages"
+              v-for="item in actions"
               :key="item"
             >
-              {{ item }}
+              {{ item.message }}
             </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-3 sidenav">
-            <ul class="list-group" id="players"></ul>
+            <ul class="list-group">
+              <li v-for="(player, index) in players"
+                    class="alert alert-info list-group-item"
+                    :key="player">
+
+                <div class="active" v-if="index==indexOfCurrentPlayer">
+                  {{player.name}}  {{countOfTrial}}/3 <span class="badge">{{player.score}}</span>
+
+                </div>
+
+                <div v-else>
+                  {{player.name}}  <span class="badge">{{player.score}}</span>
+                </div>
+
+
+                <div v-if="player.name==register_message"><span class="badge">You</span></div>
+
+                <button
+                        id="play"
+                        class="btn btn-default"
+                        type="submit"
+                        v-if="player.name==register_message && index==indexOfCurrentPlayer"
+                        @click.prevent="sendPlay"
+                >
+                  Play
+                </button>
+               </li>
+
+            </ul>
+
           </div>
+
+
           <div class="col-sm-8 mx-2">
             <div id="figures" class="col" />
           </div>
-          <button
-            id="play"
-            class="btn btn-default"
-            type="submit"
-            v-if="btn"
-            @click.prevent="sendPlay"
-          >
-            Play
-          </button>
+
         </div>
         <div class="col-sm-8 mx-2">
           <table id="cards">
@@ -185,6 +213,14 @@ export default {
   name: "websocketdemo",
   data() {
     return {
+
+      dices: [],
+      cards: [],
+      players: [],
+      actions: [],
+      status: null,
+      indexOfCurrentPlayer: null,
+      countOfTrial: null,
       received_messages: [],
       register_message: null,
       connected: false,
@@ -233,13 +269,21 @@ export default {
           this.stompClient.subscribe("/topic/game", (greeting) => {
             this.showGreeting(greeting.body);
             var thegame = JSON.parse(greeting.body);
-            this.showStatus(thegame.status, thegame.actions);
+
+            this.status = thegame.status;
+            this.actions = thegame.actions;
+            this.players = thegame.players;
+            this.countOfTrial= thegame.countOfTrialForPlayer;
+            this.indexOfCurrentPlayer = thegame.indexOfCurrentPlayer;
+
+            //this.showStatus(thegame.status, thegame.actions);
             this.showDices(thegame.dices);
+            /*
             this.showPlayers(
               thegame.players,
               thegame.indexOfCurrentPlayer,
               thegame.countOfTrialForPlayer
-            );
+            );*/
             this.showCards(thegame.cards);
           });
         },

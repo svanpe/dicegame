@@ -114,7 +114,7 @@
             <div id="figures" class="col" />
             <div id="btn-group-dices" class="btn-group-toggle" data-toggle="buttons" v-for="(dice,index) in dices" :key="dice">
 
-              <input type="checkbox" checked data-toggle="switchbutton" :id="id(index)" >
+              <input type="checkbox" v-model="checked" :value="index" :id="id(index)" >
               <i :class="thClassValue(dice.figure)"  :style="[{color:dice.color},{fontSize:'50px'}]"></i>
             </div>
           </div>
@@ -187,6 +187,7 @@ export default {
       connected: false,
       token: this.guid(),
       btn: true,
+      checked:[],
     };
   },
   mounted() {
@@ -263,27 +264,12 @@ export default {
       var playMessage = new Object();
       playMessage.token = this.token;
       playMessage.diceToKeep = new Array();
-
-      if($("#diceBtn0")!=null && $("#diceBtn0").prop('checked')){
-        playMessage.diceToKeep.push(0);
-      }
-      if($("#diceBtn1")!=null && $("#diceBtn1").prop('checked')){
-        playMessage.diceToKeep.push(1);
-      }
-      if($("#diceBtn2")!=null && $("#diceBtn2").prop('checked')){
-        playMessage.diceToKeep.push(2);
-      }
-      if($("#diceBtn3")!=null && $("#diceBtn3").prop('checked')){
-        playMessage.diceToKeep.push(3);
-      }
-      if($("#diceBtn4")!=null && $("#diceBtn4").prop('checked')){
-        playMessage.diceToKeep.push(4);
-      }
-      if($("#diceBtn5")!=null && $("#diceBtn5").prop('checked')){
-        playMessage.diceToKeep.push(5);
-      }
-
-      this.stompClient.send("/app/play", JSON.stringify(playMessage));
+      Object.keys(this.checked).forEach((key) => {
+        let check = this.checked[key];
+        playMessage.diceToKeep.push(check);
+      });
+      this.checked.length=0;
+     this.stompClient.send("/app/play", JSON.stringify(playMessage));
     },
   },
 };

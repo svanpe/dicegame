@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div>
     <div id="main-content" class="container">
      <!--
@@ -122,62 +122,18 @@
         </div>
         <div class="col-sm-8 mx-2">
           <table id="cards">
-            <div class="about">
-              <div>
-                <div class="column">
-                  <img
-                    src="../assets/carotte card.png"
-                    v-show="card1"
-                    width="240"
-                    height="320"
-                  />
-                </div>
-                <div class="column">
-                  <img
-                    src="../assets/poireau card.png"
-                    v-show="card2"
-                    width="240"
-                    height="320"
-                  />
-                </div>
-                <div class="column">
-                  <img
-                    src="../assets/salade card.png"
-                    v-show="card3"
-                    width="240"
-                    height="320"
-                  />
-                </div>
-                <div class="column">
-                  <img
-                    src="../assets/cornichon card.png"
-                    v-show="card4"
-                    width="240"
-                    height="320"
-                  />
-                </div>
-                <div class="column">
-                  <img
-                    src="../assets/treffle card.png"
-                    v-show="card5"
-                    width="240"
-                    height="320"
-                  />
-                </div>
-                <div class="column">
-                  <img
-                    src="../assets/artichaux card.png"
-                    v-show="card6"
-                    width="240"
-                    height="320"
-                  />
-                </div>
-              </div>
+          <td>
+            <div class="well" style="width: 18rem;" v-for="card in cards"
+                 :key="card">
+            <h2 style="color: green"><strong>{{card.name}}</strong></h2>
+            <p>{{card.explaination}}</p>
+            <span class="badge" style="color: white">{{card.points}}</span>
             </div>
+          </td>
           </table>
         </div>
       </div>
-
+<br>
       <div class="row">
         <div class="col-md-12">
           <div class="panel-group">
@@ -231,12 +187,6 @@ export default {
       connected: false,
       token: this.guid(),
       btn: true,
-      card1: false,
-      card2: false,
-      card3: false,
-      card4: false,
-      card5: false,
-      card6: false,
     };
   },
   mounted() {
@@ -290,16 +240,8 @@ export default {
             this.players = thegame.players;
             this.countOfTrial= thegame.countOfTrialForPlayer;
             this.indexOfCurrentPlayer = thegame.indexOfCurrentPlayer;
-this.dices = thegame.dices;
-            //this.showStatus(thegame.status, thegame.actions);
-           // this.showDices(thegame.dices);
-            /*
-            this.showPlayers(
-              thegame.players,
-              thegame.indexOfCurrentPlayer,
-              thegame.countOfTrialForPlayer
-            );*/
-            this.showCards(thegame.cards);
+            this.dices = thegame.dices;
+            this.cards = thegame.cards;
           });
         },
         (error) => {
@@ -314,133 +256,30 @@ this.dices = thegame.dices;
       }
       this.connected = false;
     },
-    tickleConnection() {
-      this.connected ? this.disconnect() : this.connect();
-    },
     showGreeting(message) {
       $("#games").append("<tr><td>" + message + "</td></tr>");
-    },
-    showStatus(status, actions) {
-      $("#gamestatus").empty();
-      gamestatus.append(status);
-      $("#actions").empty();
-      Object.keys(actions).forEach((key) => {
-        let action = actions[key];
-        this.received_messages.push(action.message);
-      });
-    },
-    showDices(dices) {
-      $("#figures").empty();
-
-      var btnIndex = 0;
-
-      $("#figures").append(
-        '<div id="btn-group-dices" class="btn-group-toggle" data-toggle="buttons">'
-      );
-      Object.keys(dices).forEach((key) => {
-        let dice = dices[key];
-        $("#btn-group-dices").append(
-          '<input type="checkbox" data-toggle="switchbutton" id="diceBtn' +
-            btnIndex +
-            '" checked>' +
-            '<i class="fas fa-dice-' +
-            dice.figure +
-            '" style="font-size:60px;color:' +
-            dice.color +
-            ';"></i>'
-        );
-        btnIndex++;
-      });
-    },
-    showPlayers(players, activePlayer, countOfTrial) {
-      $("#players").empty();
-
-      $("#players").append('<ul class="list-group">');
-
-      var index = 0;
-      Object.keys(players).forEach((key) => {
-        let player = players[key];
-        console.log(player.name);
-
-        var aclass = "";
-        var count = "";
-        var youBadge = "";
-        if (index == activePlayer) {
-          aclass = " active";
-          count = countOfTrial + "/3";
-
-          if (this.register_message == player.name && players.length > 1) {
-            this.btn = true;
-            youBadge = '<span class="badge">You</badge>';
-          } else {
-            this.btn = false;
-          }
-        }
-        $("#players").append(
-          '<li class="list-group-item' +
-            aclass +
-            '" >' +
-            player.name +
-            " " +
-            count +
-            ' <span class="badge">' +
-            player.score +
-            "</span>" +
-            youBadge +
-            "</li>"
-        );
-        index++;
-      });
-
-      $("#players").append("</ul>");
-    },
-    showCards(cards) {
-      (this.card1 = false),
-        (this.card2 = false),
-        (this.card3 = false),
-        (this.card4 = false),
-        (this.card5 = false),
-        (this.card6 = false),
-        Object.keys(cards).forEach((key) => {
-          let card = cards[key];
-          console.log(card.name);
-
-          if (card.name == "carotte") {
-            this.card1 = true;
-          } else if (card.name == "poireau") {
-            this.card2 = true;
-          } else if (card.name == "salade") {
-            this.card3 = true;
-          } else if (card.name == "cornichon") {
-            this.card4 = true;
-          } else if (card.name == "treffle") {
-            this.card5 = true;
-          } else if (card.name == "artichaux") {
-            this.card6 = true;
-          }
-        });
     },
     sendPlay() {
       var playMessage = new Object();
       playMessage.token = this.token;
       playMessage.diceToKeep = new Array();
 
-      if ($("#diceBtn0") != null && $("#diceBtn0").prop("checked")) {
+      if($("#diceBtn0")!=null && $("#diceBtn0").prop('checked')){
         playMessage.diceToKeep.push(0);
       }
-      if ($("#diceBtn1") != null && $("#diceBtn1").prop("checked")) {
+      if($("#diceBtn1")!=null && $("#diceBtn1").prop('checked')){
         playMessage.diceToKeep.push(1);
       }
-      if ($("#diceBtn2") != null && $("#diceBtn2").prop("checked")) {
+      if($("#diceBtn2")!=null && $("#diceBtn2").prop('checked')){
         playMessage.diceToKeep.push(2);
       }
-      if ($("#diceBtn3") != null && $("#diceBtn3").prop("checked")) {
+      if($("#diceBtn3")!=null && $("#diceBtn3").prop('checked')){
         playMessage.diceToKeep.push(3);
       }
-      if ($("#diceBtn4") != null && $("#diceBtn4").prop("checked")) {
+      if($("#diceBtn4")!=null && $("#diceBtn4").prop('checked')){
         playMessage.diceToKeep.push(4);
       }
-      if ($("#diceBtn5") != null && $("#diceBtn5").prop("checked")) {
+      if($("#diceBtn5")!=null && $("#diceBtn5").prop('checked')){
         playMessage.diceToKeep.push(5);
       }
 
@@ -454,26 +293,14 @@ this.dices = thegame.dices;
 .dice {
   height: 400px;
 }
-.column {
-  float: left;
-  width: 33.33%;
-  padding: 5px;
-}
-
-/* Clear floats after image containers */
-.row1::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-.row2::after {
-  content: "";
-  clear: both;
-  display: table;
-}
 .btn-group-toggle{
   content: "";
   clear: both;
   display: inline;
+}
+.well{
+  content: " ";
+  clear: both;
+  display: table-cell;
 }
 </style>

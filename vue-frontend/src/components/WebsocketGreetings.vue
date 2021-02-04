@@ -112,6 +112,11 @@
 
           <div class="col-sm-8 mx-2">
             <div id="figures" class="col" />
+            <div id="btn-group-dices" class="btn-group-toggle" data-toggle="buttons" v-for="(dice,index) in dices" :key="dice">
+
+              <input type="checkbox" checked data-toggle="switchbutton" :id="id(index)" >
+              <i :class="thClassValue(dice.figure)"  :style="[{color:dice.color},{fontSize:'50px'}]"></i>
+            </div>
           </div>
 
         </div>
@@ -241,6 +246,16 @@ export default {
     document.head.appendChild(diceScript);
   },
   methods: {
+
+      thClassValue: function (id) {
+        var value = ['fas fa-dice-' + id];
+        return value.join(' ');
+      },
+    id: function (idx) {
+          var btn = ['diceBtn' + idx];
+          return btn.join(' ');
+    },
+
     guid() {
       function _p8(s) {
         var p = (Math.random().toString(16) + "000000000").substr(2, 8);
@@ -275,9 +290,9 @@ export default {
             this.players = thegame.players;
             this.countOfTrial= thegame.countOfTrialForPlayer;
             this.indexOfCurrentPlayer = thegame.indexOfCurrentPlayer;
-
+this.dices = thegame.dices;
             //this.showStatus(thegame.status, thegame.actions);
-            this.showDices(thegame.dices);
+           // this.showDices(thegame.dices);
             /*
             this.showPlayers(
               thegame.players,
@@ -455,5 +470,10 @@ export default {
   content: "";
   clear: both;
   display: table;
+}
+.btn-group-toggle{
+  content: "";
+  clear: both;
+  display: inline;
 }
 </style>
